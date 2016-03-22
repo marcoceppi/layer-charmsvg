@@ -1,1 +1,4 @@
-includes: ['layer:basic', 'layer:apt']
+includes:
+  - 'layer:basic'
+  - 'layer:apt'
+  - 'layer:nginx'
