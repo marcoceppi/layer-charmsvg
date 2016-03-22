@@ -1,0 +1,14 @@
+options:
+  use-venv:
+    type: boolean
+    default: False
+    description: "when true, the charm will build a virtualenv and use PyPI to fetch upstream"
+  repository:
+    type: string
+    default: 
+    description: "when set, will pull the webapp from this repository. this will incur a network lookup"
+  reference:
+    type: string
+    default: master
+    description: "when repository is set, will be the ref to use. can be branch, shasum, tag, or any other valid ref"
+

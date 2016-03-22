@@ -1,0 +1,23 @@
+#!/usr/bin/python3
+
+import amulet
+import requests
+import unittest
+
+
+class TestCharm(unittest.TestCase):
+    def setUp(self):
+        self.d = amulet.Deployment()
+
+        self.d.add('charm-svg')
+        self.d.expose('charm-svg')
+
+        self.d.setup(timeout=900)
+        self.d.sentry.wait()
+
+        self.unit = self.d.sentry['charm-svg'][0]
+
+    def test_service(self):
+        # test we can access over http
+        page = requests.get('http://{}'.format(self.unit.info['public-address']))
+        self.assertEqual(page.status_code, 200)

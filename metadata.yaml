@@ -1,0 +1,21 @@
+name: charm-svg
+summary: Deploys an application which takes bundles and makes images
+maintainer: Marco Ceppi <marco@ceppi.net>
+description: |
+  Deploys the svg.juju.solutions web application and python-jujusvg binary
+  which allows the web framework to generate and serve SVG images of those
+  bundles.
+tags:
+  - application
+provides:
+  website:
+    interface: http
+resources:
+  python-jujusvg:
+    type: file
+    filename: python-jujusvg
+    description: built python-jujusvg binary
+  webapp:
+    type: file
+    filename: charm-svg.tar.gz
+    description: compressed archive of the web application
