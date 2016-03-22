@@ -4,6 +4,7 @@ import shutil
 import tarfile
 
 from charms import apt
+from charms import nginxlib
 from charms.reactive import when, when_not, set_state, remove_state
 from charms.layer import charmsvg
 
@@ -61,6 +62,18 @@ def configure_charmsvg():
 def start_charmsvg():
     hookenv.status_set('maintenance', 'starting charm-svg')
     is_ready()
+
+
+@when('nginx.available')
+@when('charm-svg.running')
+def create_vhost():
+    nginxlib.configure_site('charmsvg', 'charmsvg-vhost.conf',
+        server_name='_',
+        source_path=charmsvg.INSTALL_PATH,
+    )
+
+    open_port(80)
+    status_set('active', 'ready')
 
 
 @hook('update-status')
