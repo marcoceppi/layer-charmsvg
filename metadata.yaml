@@ -7,9 +7,6 @@ description: |
   bundles.
 tags:
   - application
-provides:
-  website:
-    interface: http
 resources:
   python-jujusvg:
     type: file
