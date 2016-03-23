@@ -76,7 +76,7 @@ def create_vhost():
     nginxlib.configure_site('charmsvg', 'charmsvg-vhost.conf',
         server_name='_',
         source_path=charmsvg.INSTALL_PATH,
-        socket=uwsgi.config().get('socket'),
+        socket=uwsgi.config('charmsvg').get('socket'),
     )
 
     open_port(80)
