@@ -3,8 +3,9 @@ import os
 import shutil
 import tarfile
 
+import nginxlib
+
 from charms import apt
-from charms import nginxlib
 from charms.reactive import when, when_not, set_state, remove_state
 
 from charms.layer import charmsvg
