@@ -9,6 +9,7 @@ from charms.reactive import when, when_not, set_state, remove_state
 from charms.layer import charmsvg
 
 from charmhelpers.core import hookenv
+from charmhelpers.core.host import chownr
 
 
 @when_not('charm-svg.installed')
@@ -97,12 +98,3 @@ def upgrade():
 
     remove_state('charm-svg.installed')
     remove_state('charm-svg.ready')
-
-
-def chownr(path, uid, gid):
-    os.chown(path, uid, gid)
-    for root, dirs, files in os.walk(path):
-        for d in dirs:
-            os.chown(os.path.join(root, d), uid, gid)
-        for f in files:
-            os.chown(os.path.join(root, f), uid, gid)
