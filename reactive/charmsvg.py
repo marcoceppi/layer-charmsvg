@@ -6,7 +6,9 @@ import tarfile
 from charms import apt
 from charms import nginxlib
 from charms.reactive import when, when_not, set_state, remove_state
+
 from charms.layer import charmsvg
+from charms.layer import uwsgi
 
 from charmhelpers.core import hookenv
 from charmhelpers.core.host import chownr
@@ -41,7 +43,7 @@ def install_resource():
 
     tar = tarfile.open(web_tar)
     tar.extractall(charmsvg.INSTALL_PATH)
-    chownr(charmsvg.INSTALL_PATH, 'ubuntu', 'ubuntu')
+    chownr(charmsvg.INSTALL_PATH, 'www-data', 'www-data')
 
     set_state('charm-svg.installed')
 
@@ -49,37 +51,45 @@ def install_resource():
 @when('charm-svg.installed')
 @when_not('charm-svg.ready')
 def configure_charmsvg():
-    remove_state('charm-svg.running')
+    remove_state('charm-svg.uwsgi.configured')
     hookenv.status_set('maintenance', 'configuring webapp')
 
     with open(charmsvg.SETTINGS_PATH, 'w') as f:
-        f.write("JUJSVG = '%s'\nPORT = %s" % (charmsvg.JUJUSVG_PATH, 80))
+        f.write("JUJSVG = '%s'" % charmsvg.JUJUSVG_PATH)
 
     set_state('charm-svg.ready')
 
 
 @when('charm-svg.ready')
-@when_not('charm-svg.running')
+@when_not('charm-svg.uwsgi.configured')
 def start_charmsvg():
-    hookenv.status_set('maintenance', 'starting charm-svg')
-    is_ready()
+    hookenv.status_set('maintenance', 'configuring uwsgi')
+    uwsgi.configure('charmsvg', charmsvg.INSTALL_PATH)
+    set_state('charm-svg.uwsgi.configured')
 
 
 @when('nginx.available')
-@when('charm-svg.running')
+@when('charm-svg.uwsgi.configured')
+@when_not('charm-svg.nginx.configured')
 def create_vhost():
     nginxlib.configure_site('charmsvg', 'charmsvg-vhost.conf',
         server_name='_',
         source_path=charmsvg.INSTALL_PATH,
+        socket=uwsgi.config().get('socket'),
     )
 
     open_port(80)
     status_set('active', 'ready')
+    set_state('charm-svg.nginx.configured')
 
 
 @hook('update-status')
 def is_ready():
-    if is_state('charm-svg.running'):
+    nginx_ready = is_state('charm-svg.nginx.configured')
+    uwsgi_ready = is_state('charm-svg.uwsgi.configured')
+    uwsgi_running = uwsgi.running()
+
+    if nginx_ready and uwsgi_ready and uwsgi_running:
         hookenv.status_set('active', 'running on port 80')
 
 

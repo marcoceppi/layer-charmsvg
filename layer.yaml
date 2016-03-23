@@ -1,5 +1,6 @@
 includes:
   - 'layer:basic'
   - 'layer:apt'
+  - 'layer:uwsgi'
   - 'layer:nginx'
 repo: https://github.com/marcoceppi/layer-charmsvg
