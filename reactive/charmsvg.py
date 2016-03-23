@@ -6,7 +6,7 @@ import tarfile
 import nginxlib
 
 from charms import apt
-from charms.reactive import when, when_not, set_state, remove_state
+from charms.reactive import when, when_not, set_state, remove_state, hook
 
 from charms.layer import charmsvg
 from charms.layer import uwsgi
