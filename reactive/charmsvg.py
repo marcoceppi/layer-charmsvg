@@ -71,7 +71,12 @@ def configure_charmsvg():
 @when_not('charm-svg.uwsgi.configured')
 def start_charmsvg():
     hookenv.status_set('maintenance', 'configuring uwsgi')
-    uwsgi.configure('charmsvg', charmsvg.INSTALL_PATH)
+    uwsgi.configure(
+        'charmsvg',
+        charmsvg.INSTALL_PATH,
+        plugins='python',
+        cfg={'file': 'app.py'},
+    )
     set_state('charm-svg.uwsgi.configured')
 
 
@@ -79,7 +84,9 @@ def start_charmsvg():
 @when('charm-svg.uwsgi.configured')
 @when_not('charm-svg.nginx.configured')
 def create_vhost():
-    nginxlib.configure_site('charmsvg', 'charmsvg-vhost.conf',
+    nginxlib.configure_site(
+        'charmsvg',
+        'charmsvg-vhost.conf',
         server_name='_',
         source_path=charmsvg.INSTALL_PATH,
         socket=uwsgi.config('charmsvg').get('socket'),
