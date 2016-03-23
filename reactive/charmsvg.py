@@ -85,8 +85,8 @@ def create_vhost():
         socket=uwsgi.config('charmsvg').get('socket'),
     )
 
-    open_port(80)
-    status_set('active', 'ready')
+    hookenv.open_port(80)
+    hookenv.status_set('active', 'ready')
     set_state('charm-svg.nginx.configured')
 
 
