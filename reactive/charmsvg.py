@@ -93,7 +93,7 @@ def create_vhost():
     )
 
     hookenv.open_port(80)
-    hookenv.status_set('active', 'ready')
+    is_ready()
     set_state('charm-svg.nginx.configured')
 
 
