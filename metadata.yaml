@@ -7,6 +7,9 @@ description: |
   bundles.
 tags:
   - application
+series:
+  - trusty
+  - xenial
 resources:
   python-jujusvg:
     type: file
